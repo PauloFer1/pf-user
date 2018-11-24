@@ -1,4 +1,4 @@
-package com.pfernand.pfuser.model;
+package com.pfernand.pfuser.core.model;
 
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;

@@ -1,4 +1,4 @@
-package com.pfernand.pfuser.model;
+package com.pfernand.pfuser.core.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

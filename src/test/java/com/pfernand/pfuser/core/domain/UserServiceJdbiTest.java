@@ -1,18 +1,17 @@
-package com.pfernand.pfuser.domain;
+package com.pfernand.pfuser.core.domain;
 
 
-import com.pfernand.pfuser.model.Email;
-import com.pfernand.pfuser.model.User;
-import com.pfernand.pfuser.repository.UserDao;
-import org.junit.Before;
+import com.pfernand.pfuser.core.model.Email;
+import com.pfernand.pfuser.core.model.User;
+import org.jdbi.v3.core.Jdbi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,14 +30,11 @@ public class UserServiceJdbiTest {
             .build();
 
     @Mock
-    private UserDao userDao;
+    private Jdbi jdbi;
 
-    private UserService userService;
+    @InjectMocks
+    private UserServiceJdbi userService;
 
-    @Before
-    public void setUp() throws Exception {
-        userService = new UserServiceJdbi(userDao);
-    }
 
     @Test
     public void saveUserCallDao() {
@@ -47,50 +43,50 @@ public class UserServiceJdbiTest {
         userService.saveUser(USER);
 
         // Then
-        Mockito.verify(userDao).insert(USER);
+        Mockito.verify(jdbi).useExtension(Mockito.any(), Mockito.any());
     }
 
     @Test
     public void getUserUuidReturnsValidUser() {
         // Given
         // When
-        Mockito.when(userDao.getUserByUuid(UUID)).thenReturn(USER);
-        Optional<User> userOptional = userService.getUser(UUID);
+        Mockito.when(jdbi.withExtension(Mockito.any(), Mockito.any())).thenReturn(USER);
+        User user = userService.getUser(UUID);
 
         // Then
-        assertThat(userOptional.get()).isEqualTo(USER);
+        assertThat(user).isEqualTo(USER);
     }
 
     @Test
     public void getUserUuidNotFoundReturnsOptionalEmpty() {
         // Given
         // When
-        Mockito.when(userDao.getUserByUuid(UUID)).thenReturn(null);
-        Optional<User> userOptional = userService.getUser(UUID);
+        Mockito.when(jdbi.withExtension(Mockito.any(), Mockito.any())).thenReturn(null);
+        User user = userService.getUser(UUID);
 
         // Then
-        assertThat(userOptional.isPresent()).isFalse();
+        assertThat(user).isNull();
     }
 
     @Test
     public void getUserEmailReturnsValidUser() {
         // Given
         // When
-        Mockito.when(userDao.getUserByEmail(EMAIL.getEmail())).thenReturn(USER);
-        Optional<User> userOptional = userService.getUser(EMAIL);
+        Mockito.when(jdbi.withExtension(Mockito.any(), Mockito.any())).thenReturn(USER);
+        User user = userService.getUser(EMAIL);
 
         // Then
-        assertThat(userOptional.get()).isEqualTo(USER);
+        assertThat(user).isEqualTo(USER);
     }
 
     @Test
     public void getUserEmailNotFoundReturnsOptionalEmpty() {
         // Given
         // When
-        Mockito.when(userDao.getUserByEmail(EMAIL.getEmail())).thenReturn(null);
-        Optional<User> userOptional = userService.getUser(EMAIL);
+        Mockito.when(jdbi.withExtension(Mockito.any(), Mockito.any())).thenReturn(null);
+        User user = userService.getUser(EMAIL);
 
         // Then
-        assertThat(userOptional.isPresent()).isFalse();
+        assertThat(user).isNull();
     }
 }

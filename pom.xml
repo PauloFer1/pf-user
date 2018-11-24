@@ -37,9 +37,15 @@
 		<mysql-connector.version>6.0.6</mysql-connector.version>
 		<commons-lang3.version>3.7</commons-lang3.version>
 		<lombok.version>1.16.20</lombok.version>
+		<pf-rest-error-handler.version>1.0-SNAPSHOT</pf-rest-error-handler.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.pfernand</groupId>
+			<artifactId>pf-rest-error-handler</artifactId>
+			<version>${pf-rest-error-handler.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
