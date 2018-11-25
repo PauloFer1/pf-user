@@ -2,13 +2,31 @@ package com.pfernand.pfuser.core.domain;
 
 import com.pfernand.pfuser.core.model.Email;
 import com.pfernand.pfuser.core.model.User;
+import com.pfernand.pfuser.port.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.inject.Named;
 
-public interface UserService {
+@Slf4j
+@Named
+public class UserService {
 
-    User saveUser(User user);
+    private final UserRepository userRepository;
 
-    User getUser(String uuid);
+    public UserService(final UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-    User getUser(Email email);
+    public User saveUser(User user) {
+        userRepository.insert(user);
+        return user;
+    }
+
+    public User getUser(String uuid) {
+        return userRepository.getUserByUuid(uuid);
+    }
+
+    public User getUser(Email email) {
+        return userRepository.getUserByEmail(email.getEmail());
+    }
 }

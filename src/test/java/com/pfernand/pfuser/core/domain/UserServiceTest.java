@@ -1,6 +1,7 @@
 package com.pfernand.pfuser.core.domain;
 
 
+import com.pfernand.pfuser.adapter.repository.UserJdbiRepository;
 import com.pfernand.pfuser.core.model.Email;
 import com.pfernand.pfuser.core.model.User;
 import org.jdbi.v3.core.Jdbi;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UserServiceJdbiTest {
+public class UserServiceTest {
 
     private static final String UUID = "QWERTY-ER12TY-567896-GHTY78Y";
     private static final Email EMAIL = new Email("paulo@mail.com");
@@ -30,10 +31,10 @@ public class UserServiceJdbiTest {
             .build();
 
     @Mock
-    private Jdbi jdbi;
+    private UserJdbiRepository userJdbiRepository;
 
     @InjectMocks
-    private UserServiceJdbi userService;
+    private UserService userService;
 
 
     @Test
@@ -43,14 +44,15 @@ public class UserServiceJdbiTest {
         userService.saveUser(USER);
 
         // Then
-        Mockito.verify(jdbi).useExtension(Mockito.any(), Mockito.any());
+        Mockito.verify(userJdbiRepository).insert(USER);
     }
 
     @Test
     public void getUserUuidReturnsValidUser() {
         // Given
         // When
-        Mockito.when(jdbi.withExtension(Mockito.any(), Mockito.any())).thenReturn(USER);
+        Mockito.when(userJdbiRepository.getUserByUuid(USER.getUuid()))
+                .thenReturn(USER);
         User user = userService.getUser(UUID);
 
         // Then
@@ -61,7 +63,8 @@ public class UserServiceJdbiTest {
     public void getUserUuidNotFoundReturnsOptionalEmpty() {
         // Given
         // When
-        Mockito.when(jdbi.withExtension(Mockito.any(), Mockito.any())).thenReturn(null);
+        Mockito.when(userJdbiRepository.getUserByUuid(UUID))
+                .thenReturn(null);
         User user = userService.getUser(UUID);
 
         // Then
@@ -72,7 +75,8 @@ public class UserServiceJdbiTest {
     public void getUserEmailReturnsValidUser() {
         // Given
         // When
-        Mockito.when(jdbi.withExtension(Mockito.any(), Mockito.any())).thenReturn(USER);
+        Mockito.when(userJdbiRepository.getUserByEmail(EMAIL.getEmail()))
+                .thenReturn(USER);
         User user = userService.getUser(EMAIL);
 
         // Then
@@ -83,7 +87,7 @@ public class UserServiceJdbiTest {
     public void getUserEmailNotFoundReturnsOptionalEmpty() {
         // Given
         // When
-        Mockito.when(jdbi.withExtension(Mockito.any(), Mockito.any())).thenReturn(null);
+        Mockito.when(userJdbiRepository.getUserByEmail(EMAIL.getEmail())).thenReturn(null);
         User user = userService.getUser(EMAIL);
 
         // Then
