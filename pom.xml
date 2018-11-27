@@ -30,7 +30,7 @@
 		<mockito.version>2.12.0</mockito.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<assertj.version>3.8.0</assertj.version>
-		<jdbi.version>3.0.1</jdbi.version>
+		<jdbi.version>3.5.1</jdbi.version>
 		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
 		<actuator.version>2.0.0.RELEASE</actuator.version>
 		<javax.inject.version>1</javax.inject.version>

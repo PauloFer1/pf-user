@@ -1,10 +1,10 @@
 package com.pfernand.pfuser.core.domain;
 
 
-import com.pfernand.pfuser.adapter.repository.UserJdbiRepository;
+import com.pfernand.pfuser.adapter.repository.UserJdbiDao;
 import com.pfernand.pfuser.core.model.Email;
 import com.pfernand.pfuser.core.model.User;
-import org.jdbi.v3.core.Jdbi;
+import com.pfernand.pfuser.exceptions.UserNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,8 +13,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
@@ -27,11 +30,11 @@ public class UserServiceTest {
             .lastName("Fernandes")
             .email(EMAIL.getEmail())
             .password("JHUYTFGRT4567FGUI")
-            .createdAt(LocalDateTime.now())
+            .createdAt(LocalDateTime.now().toInstant(ZoneOffset.UTC))
             .build();
 
     @Mock
-    private UserJdbiRepository userJdbiRepository;
+    private UserJdbiDao userJdbiDao;
 
     @InjectMocks
     private UserService userService;
@@ -44,15 +47,15 @@ public class UserServiceTest {
         userService.saveUser(USER);
 
         // Then
-        Mockito.verify(userJdbiRepository).insert(USER);
+        Mockito.verify(userJdbiDao).insert(USER);
     }
 
     @Test
     public void getUserUuidReturnsValidUser() {
         // Given
         // When
-        Mockito.when(userJdbiRepository.getUserByUuid(USER.getUuid()))
-                .thenReturn(USER);
+        Mockito.when(userJdbiDao.getUserByUuid(USER.getUuid()))
+                .thenReturn(Optional.of(USER));
         User user = userService.getUser(UUID);
 
         // Then
@@ -60,23 +63,24 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserUuidNotFoundReturnsOptionalEmpty() {
+    public void getUserUuidNotFoundThrowsException() {
         // Given
         // When
-        Mockito.when(userJdbiRepository.getUserByUuid(UUID))
-                .thenReturn(null);
-        User user = userService.getUser(UUID);
+        Mockito.when(userJdbiDao.getUserByUuid(UUID))
+                .thenReturn(Optional.empty());
 
         // Then
-        assertThat(user).isNull();
+        assertThatExceptionOfType(UserNotFoundException.class)
+                .isThrownBy(() -> userService.getUser(UUID))
+                .withMessageContaining("User not found with: " + UUID);
     }
 
     @Test
     public void getUserEmailReturnsValidUser() {
         // Given
         // When
-        Mockito.when(userJdbiRepository.getUserByEmail(EMAIL.getEmail()))
-                .thenReturn(USER);
+        Mockito.when(userJdbiDao.getUserByEmail(EMAIL.getEmail()))
+                .thenReturn(Optional.of(USER));
         User user = userService.getUser(EMAIL);
 
         // Then
@@ -84,13 +88,15 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserEmailNotFoundReturnsOptionalEmpty() {
+    public void getUserEmailNotFoundThrowsException() {
         // Given
         // When
-        Mockito.when(userJdbiRepository.getUserByEmail(EMAIL.getEmail())).thenReturn(null);
-        User user = userService.getUser(EMAIL);
+        Mockito.when(userJdbiDao.getUserByEmail(EMAIL.getEmail()))
+                .thenReturn(Optional.empty());
 
         // Then
-        assertThat(user).isNull();
+        assertThatExceptionOfType(UserNotFoundException.class)
+                .isThrownBy(() -> userService.getUser(EMAIL))
+                .withMessageContaining("User not found with: " + EMAIL.getEmail());
     }
 }

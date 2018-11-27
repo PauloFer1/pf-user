@@ -1,13 +1,13 @@
 package com.pfernand.pfuser.port.repository;
 
 import com.pfernand.pfuser.core.model.User;
-import org.jdbi.v3.sqlobject.customizer.Bind;
-import org.jdbi.v3.sqlobject.customizer.BindBean;
+
+import java.util.Optional;
 
 public interface UserDao {
-    void insert(@BindBean User user);
+    void insert(final User user);
 
-    User getUserByEmail(@Bind("email") String email);
+    Optional<User> getUserByEmail(final String email);
 
-    User getUserByUuid(@Bind("uuid") String uuid);
+    Optional<User> getUserByUuid(final String uuid);
 }

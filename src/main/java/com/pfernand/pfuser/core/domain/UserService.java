@@ -1,8 +1,9 @@
 package com.pfernand.pfuser.core.domain;
 
+import com.pfernand.pfuser.adapter.repository.UserJdbiDao;
 import com.pfernand.pfuser.core.model.Email;
 import com.pfernand.pfuser.core.model.User;
-import com.pfernand.pfuser.port.repository.UserRepository;
+import com.pfernand.pfuser.exceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Named;
@@ -11,22 +12,24 @@ import javax.inject.Named;
 @Named
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserJdbiDao userJdbiDao;
 
-    public UserService(final UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(final UserJdbiDao userJdbiDao) {
+        this.userJdbiDao = userJdbiDao;
     }
 
     public User saveUser(User user) {
-        userRepository.insert(user);
+        userJdbiDao.insert(user);
         return user;
     }
 
     public User getUser(String uuid) {
-        return userRepository.getUserByUuid(uuid);
+        return userJdbiDao.getUserByUuid(uuid)
+                .orElseThrow(() -> new UserNotFoundException(uuid));
     }
 
     public User getUser(Email email) {
-        return userRepository.getUserByEmail(email.getEmail());
+        return userJdbiDao.getUserByEmail(email.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(email.getEmail()));
     }
 }
