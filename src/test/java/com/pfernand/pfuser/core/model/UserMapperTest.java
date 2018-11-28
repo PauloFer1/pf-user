@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.assertEquals;
@@ -47,7 +48,7 @@ public class UserMapperTest {
         assertEquals(user.getFirstName(), FIRST_NAME);
         assertEquals(user.getLastName(), LAST_NAME);
         assertEquals(user.getEmail(), EMAIL);
-        assertEquals(user.getCreatedAt(), LocalDateTime.parse(CREATED_AT, FORMATTER));
+        assertEquals(user.getCreatedAt(), LocalDateTime.parse(CREATED_AT, FORMATTER).toInstant(ZoneOffset.UTC));
         assertEquals(user.getPassword(), PASSWORD);
     }
 

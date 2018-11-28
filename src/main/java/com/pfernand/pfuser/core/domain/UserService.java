@@ -7,6 +7,8 @@ import com.pfernand.pfuser.exceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Named;
+import java.time.Instant;
+import java.util.UUID;
 
 @Slf4j
 @Named
@@ -19,6 +21,8 @@ public class UserService {
     }
 
     public User saveUser(User user) {
+        user.setCreatedAt(Instant.now());
+        user.setUuid(UUID.randomUUID().toString());
         userJdbiDao.insert(user);
         return user;
     }
