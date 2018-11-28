@@ -1,6 +1,5 @@
 package com.pfernand.pfuser.adapter.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pfernand.pfuser.core.domain.UserService;
 import com.pfernand.pfuser.core.model.User;
 import com.pfernand.pfuser.port.rest.UserApi;
@@ -13,16 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Clock;
-import java.time.Instant;
 
 @Slf4j
 @RestController
 @AllArgsConstructor
 public class UserController implements UserApi {
 
-    private final Clock clock;
-    private final ObjectMapper objectMapper;
     private final UserService userService;
 
     @ApiOperation("Create a new User")
@@ -40,7 +35,7 @@ public class UserController implements UserApi {
             @ApiResponse(code = 500, message = "MaillerException"),
     })
     @RequestMapping(value = "/user", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<User> createUser(@RequestBody final User user) throws Exception {
+    public ResponseEntity<User> createUser(@RequestBody final User user) {
         log.info("POST /user with params {}", user.toString());
         return ResponseEntity.ok(userService.saveUser(user));
 

@@ -11,7 +11,6 @@ public class DataConnectionConfiguration {
 
     @Bean
     public Jdbi jdbi(DataSource dataSource) {
-        Jdbi jdbi = Jdbi.create(dataSource);
-        return jdbi;
+        return Jdbi.create(dataSource);
     }
 }

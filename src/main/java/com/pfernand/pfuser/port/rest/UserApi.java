@@ -5,5 +5,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface UserApi {
 
-    ResponseEntity<User> createUser(final User user) throws Exception;
+    ResponseEntity<User> createUser(final User user);
 }
