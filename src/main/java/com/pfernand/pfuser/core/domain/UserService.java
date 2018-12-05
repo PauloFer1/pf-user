@@ -4,7 +4,9 @@ import com.pfernand.pfuser.adapter.repository.UserJdbiDao;
 import com.pfernand.pfuser.core.model.Email;
 import com.pfernand.pfuser.core.model.User;
 import com.pfernand.pfuser.exceptions.UserNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.inject.Named;
 import java.time.Instant;
@@ -12,17 +14,16 @@ import java.util.UUID;
 
 @Slf4j
 @Named
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserJdbiDao userJdbiDao;
-
-    public UserService(final UserJdbiDao userJdbiDao) {
-        this.userJdbiDao = userJdbiDao;
-    }
+    private final BCryptPasswordEncoder encoder;
 
     public User saveUser(User user) {
         user.setCreatedAt(Instant.now());
         user.setUuid(UUID.randomUUID().toString());
+        user.setPassword(encoder.encode(user.getPassword()));
         userJdbiDao.insert(user);
         return user;
     }
