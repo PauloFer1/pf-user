@@ -73,7 +73,7 @@ public class UserServiceIT {
         // Given
         // When
         userService.saveUser(USER);
-        User user = userService.getUser(new Email(USER.getEmail()));
+        User user = userService.getUserByEmail(USER.getEmail());
 
         assertEquals(USER, user);
     }

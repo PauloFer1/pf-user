@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -35,6 +36,9 @@ public class UserServiceTest {
 
     @Mock
     private UserJdbiDao userJdbiDao;
+
+    @Mock
+    private BCryptPasswordEncoder encoder;
 
     @InjectMocks
     private UserService userService;
@@ -81,7 +85,7 @@ public class UserServiceTest {
         // When
         Mockito.when(userJdbiDao.getUserByEmail(EMAIL.getEmail()))
                 .thenReturn(Optional.of(USER));
-        User user = userService.getUser(EMAIL);
+        User user = userService.getUserByEmail(EMAIL.getEmail());
 
         // Then
         assertThat(user).isEqualTo(USER);
@@ -91,12 +95,10 @@ public class UserServiceTest {
     public void getUserEmailNotFoundThrowsException() {
         // Given
         // When
-        Mockito.when(userJdbiDao.getUserByEmail(EMAIL.getEmail()))
-                .thenReturn(Optional.empty());
 
         // Then
         assertThatExceptionOfType(UserNotFoundException.class)
-                .isThrownBy(() -> userService.getUser(EMAIL))
+                .isThrownBy(() -> userService.getUser(EMAIL.getEmail()))
                 .withMessageContaining("User not found with: " + EMAIL.getEmail());
     }
 }

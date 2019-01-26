@@ -33,8 +33,8 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(uuid));
     }
 
-    public User getUser(Email email) {
-        return userJdbiDao.getUserByEmail(email.getEmail())
-                .orElseThrow(() -> new UserNotFoundException(email.getEmail()));
+    public User getUserByEmail(String email) {
+        return userJdbiDao.getUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
 }
